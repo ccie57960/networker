@@ -1,0 +1,22 @@
+I included some sample scripts:
+ networker/dijkstra/scripts/sample1.py
+ networker/dijkstra/scripts/sample2.py
+
+Looback: 10.0.0.X where X=router number
+ "R7":"10.0.0.7", "R120":"10.0.0.120"
+
+Link IP Address:
+ 10.a.b.a/24 where "a" is the local router and "b" is the remote one
+ R110 to  R120: 10.110.120.110/24
+
+OSPF multi-access (non-p2p) interfaces:
+ All interfaces connected to L2SW
+ R10 to/from R11 link
+ * anything else is p2p (point-to-point)
+
+
+All interfaces:
+ OSPF Cost 10
+ Area 0
+
+OSPF process 1
