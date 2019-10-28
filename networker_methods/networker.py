@@ -78,7 +78,7 @@ def issubnetv4(ip, network, mask=""):
     return ip == network
 
 def ios_ospf_lsa2(lsa2):
-    '''Based on "show ip ospf 1 0 database network" (cisco IOS)
+    '''Based on "show ip ospf 1 0 database network" (Cisco IOS)
     recommended filter: "| include Routing|Designated|Mask|Attached"
     return dictionary as follow:
     {dr_ip:{"network":dr_ip/mask, "routers":(r1, r2,...,rn)}}
@@ -114,11 +114,25 @@ def ios_ospf_lsa2(lsa2):
     return dict_lsa2
 
 def ios_ospf_lsa1(lsa1, dict_lsa2 = {}):
-    '''Based on "show ip ospf 1 0 database network" (cisco IOS)
-    recommended filter: "| include Routing|Designated|Mask|Attached"
+    '''Based on "show ip ospf 1 0 database router" (Cisco IOS)
+    recommended filter: "| include Link State ID|Link connected to|(Link ID)|Metrics"
+    In case your network has LSA Type 2, firstly run "ios_ospf_lsa2"
+    and provide the output dictionary to this method, if not, LSA type 2 will be ignored.
+
     return dictionary as follow:
-    {dr_ip:{"network":dr_ip/mask, "routers":(r1, r2,...,rn)}}
-    {10.7.8.7:{"network":10.7.8.7/24, "routers":(10.7.8.7, 10.7.8.1,...,10.7.8.2)}}
+    {
+     "node1":
+       {"node1_neighbor1": [list of metric], "node1_neighbor2":[list of metric]},
+     "node2":
+       {"node2_neighbor1": [list of metric], "node1_neighbor2":[list of metric]},
+    }
+
+    {
+     '10.0.0.7':
+       {'10.0.0.77': [10], '10.0.0.8': [10], '10.0.0.9': [10]},
+     '10.0.0.8':
+       {'10.0.0.10': [10], '10.0.0.12': [10], '10.0.0.9': [10, 10], '10.0.0.77': [10], '10.0.0.7': [10]}
+    }
 
     Example for OSPF process-ID:1 and area:0
     **Single Area support "at once"
@@ -136,9 +150,6 @@ def ios_ospf_lsa1(lsa1, dict_lsa2 = {}):
     for index, line in enumerate(lsa1):
         if "Link State ID" in line:
             routerid = line.split()[3]
-            # network_type = ""
-            # adj_reference = ""
-            # metric = metric_high
 
         elif "Link connected to" in line:
             if "Stub Network" in line:
@@ -193,8 +204,10 @@ def ios_ospf_lsa1(lsa1, dict_lsa2 = {}):
     return dict_lsa1
 
 def sh_lsa1():
-    '''For testing porpose - From Cisco IOS
-show ip ospf 1 0 database router
+    '''For testing/illustration purpose - From Cisco IOS
+show ip ospf 1 0 database router.
+In real life you may use an SSH client (ie: Napalm or Netmiko)
+to get the show output or any other method you may prefer.
     '''
     return '''
 
@@ -593,8 +606,10 @@ R7#
 '''
 
 def sh_lsa2():
-    '''For testing porpose - From Cisco IOS
-show ip ospf 1 0 database network
+    '''For testing purpose - From Cisco IOS
+show ip ospf 1 0 database network.
+In real life you may use an SSH client (ie: Napalm or Netmiko)
+to get the show output or any other method you may prefer.
     '''
     return '''
 

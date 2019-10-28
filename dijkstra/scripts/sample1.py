@@ -4,7 +4,7 @@ from node import Node
 from edge import Edge
 from spt import SPT
 
-
+#Create all nodes/routers
 r0 = Node("R0")
 r1 = Node("R1")
 r2 = Node("R2")
@@ -17,6 +17,7 @@ r8 = Node("R8")
 
 list_r = [r0,r1,r2,r3,r4,r5,r6,r7,r8]
 
+#Create all edges/links
 e01 = Edge(r0,r1,4)
 e10 = Edge(r1,r0,4)
 e07 = Edge(r0,r7,8)
@@ -62,7 +63,7 @@ r0.list_adjacency.append(e08)
 r8.list_adjacency.append(e80)
 #</ECMP_Test>
 
-
+#Assign the edge to each node
 r0.list_adjacency.append(e01)
 r0.list_adjacency.append(e07)
 
@@ -100,16 +101,18 @@ r8.list_adjacency.append(e82)
 r8.list_adjacency.append(e86)
 r8.list_adjacency.append(e87)
 
-ospf = SPT()
-ospf.runSPT(r0)
+#Create SPT instance
+net_spt = SPT()
+#Run SFT for R0 as the source of the tree
+net_spt.runSPT(r0)
 
 print("From R0 to:\n")
 print("Dst\tCost\tTracePath")
 
-for k,v in r0.database.items():
+lsdb = r0.return_database()
+for k,v in lsdb.items():
     print(f'{k}\t{v["cost"]}\t{v["tracepath"]}')
 
 # #Another way to do the same:
-# lsdb = r0.return_database()
-# for k,v in lsdb.items():
+# for k,v in r0.database.items():
 #     print(f'{k}\t{v["cost"]}\t{v["tracepath"]}')
