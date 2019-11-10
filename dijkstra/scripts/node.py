@@ -1,8 +1,8 @@
 #!/usr/bin/env python
+from weakref import WeakSet
 
 class Node():
-    all_instances = set() #Store all instances of this class
-    #first_run = False
+    all_instances = WeakSet() #Store all instances of this class
 
     def __init__(self, name, nickname = ""):
         '''Representation of a node/router
